@@ -1,4 +1,5 @@
 from gensim import corpora
+from nltk import words
 
 documents = ["Human machine interface for lab abc computer applications",
             "A survey of user opinion of computer system response time",
@@ -10,8 +11,10 @@ documents = ["Human machine interface for lab abc computer applications",
               "Graph minors IV Widths of trees and well quasi ordering",
               "Graph minors A survey"]
 
- # remove common words and tokenize
-stoplist = set('for a of the and to in'.split())
+# remove common words and tokenize
+# stoplist = set('for a of the and to in'.split())
+stoplist = set(words.stopwords('english'))
+
 texts = [[word for word in document.lower().split() if word not in stoplist]
           for document in documents]
 
