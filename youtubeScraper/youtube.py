@@ -49,7 +49,7 @@ def getLyrics(songName):
     lyrics = tree.xpath('//div[@class="fb-quotable"]/text()')
     lyrics2 = tree.xpath('//div[@class="fb-quotable"]/div[@class="p402_premium"]/text()')
     a = ('\n'.join(lyrics) + '\n'.join(lyrics2)).replace('\t', '')
-    return a.replace("\n\n\n\n\n", '\n')
+    return a.replace("\n\n\n\n\n", '\n').encode('UTF-8')
 
 
 def writeLyrics(lyric, songName):
