@@ -1,9 +1,13 @@
 import nltk
 import string
 from sklearn.feature_extraction.text import TfidfVectorizer
+from bs4 import BeautifulSoup
+import requests
 
 TRAINDATA = ['input2.txt']
 USERINPUT = 'input1.txt'
+# THESAURUS_URL = 'http://www.thesaurus.com/browse/'
+THESAURUS_URL = 'https://en.oxforddictionaries.com/thesaurus/'
 
 
 def stem_tokens(tokens):
@@ -20,7 +24,11 @@ def cosine_sim(text1, text2):
 
 
 def get_related_words(word):
-    return word
+    url = THESAURUS_URL + word
+    print requests.get(url)
+    soup = BeautifulSoup(requests.get(url).content, 'html.parser')
+    print str(soup)
+    # print str(soup.find_all('section', _class='senseGroup sense_group_0')[0].find_all('div', _class='synGroup'))
 
 
 def read_file(filename):
