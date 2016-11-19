@@ -3,6 +3,8 @@ import string
 from sklearn.feature_extraction.text import TfidfVectorizer
 from bs4 import BeautifulSoup
 import requests
+from nltk.tokenize import RegexpTokenizer
+from nltk.corpus import stopwords
 
 TRAINDATA = ['input2.txt']
 USERINPUT = 'input1.txt'
@@ -24,11 +26,23 @@ def cosine_sim(text1, text2):
 
 
 def get_related_words(word):
-    url = THESAURUS_URL + word
-    print requests.get(url)
-    soup = BeautifulSoup(requests.get(url).content, 'html.parser')
-    print str(soup)
-    # print str(soup.find_all('section', _class='senseGroup sense_group_0')[0].find_all('div', _class='synGroup'))
+    # return word
+    try:
+        url = THESAURUS_URL + word
+        print url
+        headers = {'accept': 'text/html'}
+        soup = BeautifulSoup(requests.get(url, headers=headers).content, 'html.parser')
+        sense_groups = soup.find_all('section', 'sense_group_0')
+        if len(sense_groups) == 0:
+            return word
+
+        divs = sense_groups[0].find_all('div', 'se2')[0].find_all('div', 'synGroup')
+        words = []
+        for div in divs:
+            words.append(div.p.strong.string)
+        return ' '.join(words)
+    except Exception as ex:
+        return word
 
 
 def read_file(filename):
@@ -37,7 +51,7 @@ def read_file(filename):
 
 
 def get_score(userKeys, databaseKeys):
-    return cosine_sim(' '.join(userKeys), ' '.join(databaseKeys))
+    return cosine_sim(userKeys, databaseKeys)
 
 
 if __name__ == '__main__':
@@ -50,16 +64,20 @@ if __name__ == '__main__':
 
     userinput = read_file(USERINPUT)
     words = []
-    for word in userinput.split(' '):
-        words.append(get_related_words(word))
+    tokenizer = RegexpTokenizer(r"[\w']+")
+
+    for word in set([w.lower() for w in tokenizer.tokenize(userinput) if w not in stopwords.words('english')]):
+        words.append(get_related_words(word.lower()))
     userinput = ' '.join(words)
     scores = []
     for filename in TRAINDATA:
         train_data_content = read_file(filename)
         words = []
-        for word in train_data_content.split(' '):
-            words.append(get_related_words(word))
+        for word in set([w.lower() for w in tokenizer.tokenize(train_data_content) if w not in stopwords.words('english')]):
+            words.append(get_related_words(word.lower()))
         words = ' '.join(words)
+        print words
+        print userinput
         scores.append(get_score(words, userinput))
 
     print sorted(scores)
