@@ -4,7 +4,7 @@ import requests
 from lxml import html
 import sys
 import io
-import pygster
+
 
 def getSongNames(youtubeLink):
     req = requests.session()
@@ -13,27 +13,30 @@ def getSongNames(youtubeLink):
     songNames = tree.xpath('//div[@class="yt-lockup-content"]/h3/a/text()')
     return songNames
 
+
 def getInstrumLink(songNames):
     songNames = '+'.join(songNames.split(' '))
     payload = {
-        'search_query' : songNames
+        'search_query': songNames
     }
     req = requests.session()
-    page = req.post('https://www.youtube.com/results?', data = payload)
+    page = req.post('https://www.youtube.com/results?', data=payload)
     tree = html.fromstring(page.content)
     instrumLink = tree.xpath('//div[@class="yt-lockup-content"]/h3/a/@href')
     return instrumLink[0]
 
+
 def downloadYoutube(youtubeLink):
     ydl_opts = {}
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([youtubeLink]) 
+        ydl.download([youtubeLink])
+
 
 def getLyrics(songName):
     req = requests.session()
     songName = '+'.join(songName.split(' '))
     payload = {
-        'k' : songName
+        'k': songName
     }
     url = 'http://www.lyricsmania.com/searchnew.php?'
     page = req.post(url, data=payload)
@@ -48,19 +51,20 @@ def getLyrics(songName):
     a = ('\n'.join(lyrics) + '\n'.join(lyrics2)).replace('\t', '')
     return a.replace("\n\n\n\n\n", '\n')
 
+
 def writeLyrics(lyric, songName):
     with io.FileIO(songName + ".txt", "w") as file:
             file.write(lyric)
+
 
 def main():
     songNames = getSongNames(sys.argv[1])
     for song in songNames:
         writeLyrics(getLyrics(song), song)
-        youtubeLink = getInstrumLink(song + 'instrumental')
-        youtubeLink = 'http://www.youtube.com' + youtubeLink
-        downloadYoutube(youtubeLink)
-	pipeline = pygster.parse_launch("filesrc location=" + song + ".wav ! decodebin ! audioconvert !  lame ! filesink location=" + song + ".mp3")
-	pipeline.set_state(gst.STATE_PLAYING)
+        if (sys.argv[2] == 'yt'):
+            youtubeLink = getInstrumLink(song + 'instrumental')
+            youtubeLink = 'http://www.youtube.com' + youtubeLink
+            downloadYoutube(youtubeLink)
 
 if __name__ == '__main__':
     main()
