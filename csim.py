@@ -5,8 +5,9 @@ from bs4 import BeautifulSoup
 import requests
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
+import os
 
-TRAINDATA = ['input2.txt']
+TRAIN_DATA_DIR = 'train_data'
 USERINPUT = 'input1.txt'
 # THESAURUS_URL = 'http://www.thesaurus.com/browse/'
 THESAURUS_URL = 'https://en.oxforddictionaries.com/thesaurus/'
@@ -26,7 +27,7 @@ def cosine_sim(text1, text2):
 
 
 def get_related_words(word):
-    # return word
+    return word
     try:
         url = THESAURUS_URL + word
         print url
@@ -66,18 +67,16 @@ if __name__ == '__main__':
     words = []
     tokenizer = RegexpTokenizer(r"[\w']+")
 
-    for word in set([w.lower() for w in tokenizer.tokenize(userinput) if w not in stopwords.words('english')]):
+    for word in [w.lower() for w in tokenizer.tokenize(userinput) if w not in stopwords.words('english')]:
         words.append(get_related_words(word.lower()))
     userinput = ' '.join(words)
     scores = []
-    for filename in TRAINDATA:
-        train_data_content = read_file(filename)
+    for filename in os.listdir(TRAIN_DATA_DIR):
+        train_data_content = read_file(TRAIN_DATA_DIR + '/' + filename)
         words = []
-        for word in set([w.lower() for w in tokenizer.tokenize(train_data_content) if w not in stopwords.words('english')]):
+        for word in [w.lower() for w in tokenizer.tokenize(train_data_content) if w not in stopwords.words('english')]:
             words.append(get_related_words(word.lower()))
         words = ' '.join(words)
-        print words
-        print userinput
         scores.append(get_score(words, userinput))
-
-    print sorted(scores)
+        print filename + ': ' + str(scores)
+    print sorted(scores)[-1]
