@@ -1,0 +1,12 @@
+Ocp-Apim-Subscription-Key: 5f93d9702e764cc6ab353360474e565f
+Content-Type: application/json
+Accept: application/json
+{
+    "documents": [
+        {
+            "language": "en",
+            "id": "1",
+            "text": "upload.txt"
+        }
+    ]
+}
