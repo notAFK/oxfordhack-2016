@@ -1,10 +1,12 @@
 import os
 import re
 import sys
+import json
 import unicodedata
 from makeuplink import get_sentiment
 
 DATAPATH = 'youtubeScraper/ok/'
+MIDIPATH = 'youtubeScraper/midi/'
 
 
 def normalize(value):
@@ -16,6 +18,10 @@ def normalize(value):
 def passfile(filename):
     newfilename = normalize(filename)
     os.rename(DATAPATH+filename, DATAPATH+newfilename)
+
+def passmidi(filename):
+    newfilename = normalize(filename)
+    os.rename(MIDIPATH+filename, MIDIPATH+newfilename)
 
 
 def passlyrics(filename):
@@ -31,16 +37,23 @@ def passlyrics(filename):
 
 
 def index_lyrics(filename, score):
+    jsonstring = {}
     sentiment = ''
+    if score > 0.5:
+        sentiment = 'hpy'
+    else:
+        sentiment = 'sad'
+    jsonstring.update({'score': score, 'filename': filename, 'sentiment': sentiment})
+
     with open('INDEX.db', 'a') as mainindex:
-        if score > 0.5:
-            sentiment = 'hpy'
-        else:
-            sentiment = 'sad'
-        mainindex.writelines(str(score) + ' ' + filename + ' ' + sentiment + ' \n')
+        mainindex.write(json.dumps(jsonstring))
+        mainindex.write('\n')
 
 if __name__ == '__main__':
     td = os.listdir(DATAPATH)
+    if sys.argv[1] == 'midi':
+        for d in os.listdir(MIDIPATH):
+            passmidi(d)
     for d in td:
         if len(sys.argv) > 1:
             if sys.argv[1] == 'pass':

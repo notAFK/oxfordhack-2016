@@ -1,4 +1,6 @@
 import os
+import sys
+import json
 import nltk
 import string
 import indexer
@@ -64,7 +66,7 @@ if __name__ == '__main__':
     # Read the user input file and prepare the variables.
     userinput = read_file(USERINPUT)
     words = []
-    _GLOBALDICTIONARY = {}
+    _GLOBALDICTIONARY = []
     tokenizer = RegexpTokenizer(r"[\w']+")
 
     # Start matching the words.
@@ -84,7 +86,7 @@ if __name__ == '__main__':
             score = get_score(words, userinput)
             scores.append(score)
             # Update the dictionary with the filename and the score.
-            _GLOBALDICTIONARY.update({score: filename})
+            _GLOBALDICTIONARY.append(dict({'score': score, 'filename': filename}))
         except:
             pass
 #        print filename + ': ' + str(scores)
@@ -96,15 +98,29 @@ if __name__ == '__main__':
     else:
         THISSENTIMENT = 'sad'
 
-    # Print the global dictionary as a list.
-    for k, i in _GLOBALDICTIONARY.items():
-        print k, i
+#    Print the global dictionary as a list.
+#    for k, d in _GLOBALDICTIONARY.items():
+#        print k, d
 
-    with open(INDEXDB) as sourcefile:
-        for line in sourcefile.readlines():
-            if line.split(' ')[2] == THISSENTIMENT+'\n':
-                print line,
-                _GLOBALDICTIONARY[]
+    sentimentdictlist = []
+    with open(INDEXDB, 'r') as mainindex:
+        for line in mainindex.readlines():
+            jsondict = json.loads(line)
+            if jsondict['sentiment'] == THISSENTIMENT:
+                sentimentdictlist.append(jsondict)
 
-    # Print the highest score match.
-    print 'MATHCH: ' + _GLOBALDICTIONARY[sorted(scores)[-1]], sorted(scores)[-1]
+    for gdict in _GLOBALDICTIONARY:
+        for path in gdict['filename']:
+            print path
+
+
+
+    # finalscores = []
+    # for mydict in sentimentdictlist:
+    #     finalscores.append(mydict['score'])
+    #
+    # finalscores = sorted(finalscores)
+    # highscore = finalscores[-1]
+    # for mydict in sentimentdictlist:
+    #     if mydict['score'] == highscore:
+    #         print mydict
