@@ -1,4 +1,6 @@
 import os
+import sys
+import json
 import nltk
 import string
 import requests
@@ -78,7 +80,7 @@ if __name__ == '__main__':
     # Read the user input file and prepare the variables.
     userinput = read_file(USERINPUT)
     words = []
-    _GLOBALDICTIONARY = {}
+    _GLOBALDICTIONARY = []
     tokenizer = RegexpTokenizer(r"[\w']+")
 
     # Start matching the words.
@@ -98,15 +100,41 @@ if __name__ == '__main__':
             score = get_score(words, userinput)
             scores.append(score)
             # Update the dictionary with the filename and the score.
-            _GLOBALDICTIONARY.update({score: filename})
+            _GLOBALDICTIONARY.append(dict({'score': score, 'filename': filename}))
         except:
             pass
 #        print filename + ': ' + str(scores)
 #    print sorted(scores)[-1]
 
-    # Print the global dictionary as a list.
-    for k, i in _GLOBALDICTIONARY.items():
-        print k, i
+    THISSENTIMENT = float(makeuplink.get_sentiment(USERINPUT))
+    if THISSENTIMENT > 0.5:
+        THISSENTIMENT = 'hpy'
+    else:
+        THISSENTIMENT = 'sad'
 
-    # Print the highest score match.
-    print 'MATHCH: ' + _GLOBALDICTIONARY[sorted(scores)[-1]]
+#    Print the global dictionary as a list.
+#    for k, d in _GLOBALDICTIONARY.items():
+#        print k, d
+
+    sentimentdictlist = []
+    with open(INDEXDB, 'r') as mainindex:
+        for line in mainindex.readlines():
+            jsondict = json.loads(line)
+            if jsondict['sentiment'] == THISSENTIMENT:
+                sentimentdictlist.append(jsondict)
+
+    for gdict in _GLOBALDICTIONARY:
+        for path in gdict['filename']:
+            print path
+
+
+
+    # finalscores = []
+    # for mydict in sentimentdictlist:
+    #     finalscores.append(mydict['score'])
+    #
+    # finalscores = sorted(finalscores)
+    # highscore = finalscores[-1]
+    # for mydict in sentimentdictlist:
+    #     if mydict['score'] == highscore:
+    #         print mydict
