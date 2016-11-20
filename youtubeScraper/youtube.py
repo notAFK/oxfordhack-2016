@@ -27,7 +27,12 @@ def getInstrumLink(songNames):
 
 
 def downloadYoutube(youtubeLink):
-    ydl_opts = {}
+    ydl_opts = {
+        'posprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3'
+        }]
+    }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([youtubeLink])
 

@@ -77,6 +77,9 @@ if __name__ == '__main__':
         for word in [w.lower() for w in tokenizer.tokenize(train_data_content) if w not in stopwords.words('english')]:
             words.append(get_related_words(word.lower()))
         words = ' '.join(words)
-        scores.append(get_score(words, userinput))
+        try:
+            scores.append(get_score(words, userinput))
+        except:
+            pass
         print filename + ': ' + str(scores)
     print sorted(scores)[-1]
