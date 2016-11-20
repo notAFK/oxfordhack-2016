@@ -19,10 +19,15 @@ def passfile(filename):
 
 
 def passlyrics(filename):
-    with open(filename, 'wr') as sourcefile:
+    NEWFILE = ''
+    with open(filename, 'r') as sourcefile:
         for line in sourcefile:
             if line.strip():
-                sourcefile.write(line)
+                NEWFILE += line
+                print line
+                print 'STRIPE!'
+    with open(filename, 'w') as sourcefile:
+        sourcefile.write(NEWFILE)
 
 
 def index_lyrics(filename, score):
@@ -34,7 +39,9 @@ if __name__ == '__main__':
     for d in td:
         if sys.argv[1] == 'pass':
             passfile(d)
-        else if sys.argv[1] == 'lyrics':
+        elif sys.argv[1] == 'lyrics':
             passlyrics(DATAPATH+d)
-        else:
+        elif sys.argv[1] == 'server':
             index_lyrics(d, get_sentiment(DATAPATH+d))
+        else:
+            print 'WRONG ARGV'
