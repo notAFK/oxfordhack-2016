@@ -81,11 +81,13 @@ if __name__ == '__main__':
         try:
             score = get_score(words, userinput)
             scores.append(score)
-            _GLOBALDICTIONARY.update({filename: score})
+            _GLOBALDICTIONARY.update({score: filename})
         except:
             pass
-        print filename + ': ' + str(scores)
+#        print filename + ': ' + str(scores)
 #    print sorted(scores)[-1]
 
     for k, i in _GLOBALDICTIONARY.items():
-        print i, k
+        print k, i
+
+    print 'MATHCH: ' + _GLOBALDICTIONARY[sorted(scores)[-1]]
