@@ -65,6 +65,7 @@ if __name__ == '__main__':
 
     userinput = read_file(USERINPUT)
     words = []
+    _GLOBALDICTIONARY = {}
     tokenizer = RegexpTokenizer(r"[\w']+")
 
     for word in [w.lower() for w in tokenizer.tokenize(userinput) if w not in stopwords.words('english')]:
@@ -78,8 +79,13 @@ if __name__ == '__main__':
             words.append(get_related_words(word.lower()))
         words = ' '.join(words)
         try:
-            scores.append(get_score(words, userinput))
+            score = get_score(words, userinput)
+            scores.append(score)
+            _GLOBALDICTIONARY.update({filename: score})
         except:
             pass
         print filename + ': ' + str(scores)
-    print sorted(scores)[-1]
+#    print sorted(scores)[-1]
+
+    for k, i in _GLOBALDICTIONARY.items():
+        print i, k
