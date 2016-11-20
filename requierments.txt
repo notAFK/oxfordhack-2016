@@ -1,0 +1,11 @@
+setuptools
+beautifulsoup4==4.5.1
+logging==0.4.9.6
+lxml==3.6.4
+nltk==3.2.1
+python-dateutil==2.6.0
+requests==2.10.0
+requests-toolbelt==0.7.0
+urllib3==1.19
+youtube-dl==2016.11.18
+
