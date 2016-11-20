@@ -100,7 +100,7 @@ if __name__ == '__main__':
             score = get_score(words, userinput)
             scores.append(score)
             # Update the dictionary with the filename and the score.
-            _GLOBALDICTIONARY.append(dict({'score': score, 'filename': filename}))
+            _GLOBALDICTIONARY.append(dict({'rating': score, 'filename': filename}))
         except:
             pass
 #        print filename + ': ' + str(scores)
@@ -123,10 +123,21 @@ if __name__ == '__main__':
             if jsondict['sentiment'] == THISSENTIMENT:
                 sentimentdictlist.append(jsondict)
 
-    for gdict in _GLOBALDICTIONARY:
-        for path in gdict['filename']:
-            print path
+    finalscores = []
+    for sdict in sentimentdictlist:
+        for gdict in _GLOBALDICTIONARY:
+            if gdict['filename'] == sdict['filename']:
+                finalscores.append(gdict['rating'])
 
+    highscore = sorted(finalscores, reverse=True)[0]
+
+    for gdict in _GLOBALDICTIONARY:
+        if gdict['rating'] == highscore:
+            for sdict in sentimentdictlist:
+                if gdict['filename'] == sdict['filename']:
+                    print
+                    print gdict
+                    print sdict
 
 
     # finalscores = []
