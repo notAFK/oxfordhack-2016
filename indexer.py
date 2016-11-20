@@ -61,11 +61,10 @@ if __name__ == '__main__':
             for d in os.listdir(MIDIPATH):
                 passmidi(d)
     for d in td:
-        if sys.argv[1] == 'pass':
-            passfile(d)
-        elif sys.argv[1] == 'lyrics':
-            passlyrics(DATAPATH+d)
-        elif sys.argv[1] == 'server':
-            index_lyrics(d, get_sentiment(DATAPATH+d))
+        if len(sys.argv) > 1:
+            if sys.argv[1] == 'pass':
+                passfile(d)
+            elif sys.argv[1] == 'lyrics':
+                passlyrics(DATAPATH+d)
         else:
-            print 'WRONG ARGV'
+            index_lyrics(d, get_sentiment(DATAPATH+d))

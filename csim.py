@@ -3,7 +3,9 @@ import sys
 import json
 import nltk
 import string
+import indexer
 import requests
+import makeuplink
 from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
@@ -11,9 +13,11 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 # Points to the directory that contains lyrics.
-TRAIN_DATA_DIR = 'train_data'
+TRAIN_DATA_DIR = 'youtubeScraper/ok/'
 # Points to the user input file.
 USERINPUT = 'input1.txt'
+# Path to main database index.
+INDEXDB = 'INDEX.db'
 
 
 def stem_tokens(tokens):
@@ -35,24 +39,6 @@ def cosine_sim(text1, text2):
 def get_related_words(word):
     ''' Deprecated method. '''
     return word
-    '''
-    try:
-        url = THESAURUS_URL + word
-        print url
-        headers = {'accept': 'text/html'}
-        soup = BeautifulSoup(requests.get(url, headers=headers).content, 'html.parser')
-        sense_groups = soup.find_all('section', 'sense_group_0')
-        if len(sense_groups) == 0:
-            return word
-
-        divs = sense_groups[0].find_all('div', 'se2')[0].find_all('div', 'synGroup')
-        words = []
-        for div in divs:
-            words.append(div.p.strong.string)
-        return ' '.join(words)
-    except Exception as ex:
-        return word
-    '''
 
 
 def read_file(filename):
