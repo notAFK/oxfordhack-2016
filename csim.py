@@ -1,33 +1,39 @@
+import os
 import nltk
 import string
-from sklearn.feature_extraction.text import TfidfVectorizer
-from bs4 import BeautifulSoup
 import requests
-from nltk.tokenize import RegexpTokenizer
+from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
-import os
+from nltk.tokenize import RegexpTokenizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
+
+# Points to the directory that contains lyrics.
 TRAIN_DATA_DIR = 'train_data'
+# Points to the user input file.
 USERINPUT = 'input1.txt'
-# THESAURUS_URL = 'http://www.thesaurus.com/browse/'
-THESAURUS_URL = 'https://en.oxforddictionaries.com/thesaurus/'
 
 
 def stem_tokens(tokens):
+    ''' Return items that can stand alone or be combined. '''
     return [stemmer.stem(item) for item in tokens]
 
 
 def normalize(text):
+    ''' Remove untwanted char from the data stream. '''
     return stem_tokens(nltk.word_tokenize(text.lower().translate(remove_punctuation_map)))
 
 
 def cosine_sim(text1, text2):
+    ''' Return the cosine similarity, between two non zero vectors of an inner product space '''
     tfidf = vectorizer.fit_transform([text1, text2])
     return ((tfidf * tfidf.T).A)[0, 1]
 
 
 def get_related_words(word):
+    ''' Deprecated method. '''
     return word
+    '''
     try:
         url = THESAURUS_URL + word
         print url
@@ -44,34 +50,43 @@ def get_related_words(word):
         return ' '.join(words)
     except Exception as ex:
         return word
+    '''
 
 
 def read_file(filename):
+    ''' Return the source of a file. '''
     with open(filename, 'r') as source:
         return source.read()
 
 
 def get_score(userKeys, databaseKeys):
+    ''' Calculate the score using the user defined terms and all the terms in the training database. '''
     return cosine_sim(userKeys, databaseKeys)
 
 
 if __name__ == '__main__':
+    # Make sure ntlk package is present.
     nltk.download('punkt')
 
+    # Generate punctuation map.
     stemmer = nltk.stem.porter.PorterStemmer()
     remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
 
+    # Normalize the stream.
     vectorizer = TfidfVectorizer(tokenizer=normalize, stop_words='english')
 
+    # Read the user input file and prepare the variables.
     userinput = read_file(USERINPUT)
     words = []
     _GLOBALDICTIONARY = {}
     tokenizer = RegexpTokenizer(r"[\w']+")
 
+    # Start matching the words.
     for word in [w.lower() for w in tokenizer.tokenize(userinput) if w not in stopwords.words('english')]:
         words.append(get_related_words(word.lower()))
     userinput = ' '.join(words)
     scores = []
+    # Check the training database files.
     for filename in os.listdir(TRAIN_DATA_DIR):
         train_data_content = read_file(TRAIN_DATA_DIR + '/' + filename)
         words = []
@@ -79,15 +94,30 @@ if __name__ == '__main__':
             words.append(get_related_words(word.lower()))
         words = ' '.join(words)
         try:
+<<<<<<< HEAD
             score = get_score(words, userinput)
             scores.append(score)
+=======
+            # Calculate the score between two files.
+            score = get_score(words, userinput)
+            scores.append(score)
+            # Update the dictionary with the filename and the score.
+>>>>>>> a77f54ece887eced3ad1e5529fa15a53acaa0007
             _GLOBALDICTIONARY.update({score: filename})
         except:
             pass
 #        print filename + ': ' + str(scores)
 #    print sorted(scores)[-1]
 
+<<<<<<< HEAD
     for k, i in _GLOBALDICTIONARY.items():
         print k, i
 
+=======
+    # Print the global dictionary as a list.
+    for k, i in _GLOBALDICTIONARY.items():
+        print k, i
+
+    # Print the highest score match.
+>>>>>>> a77f54ece887eced3ad1e5529fa15a53acaa0007
     print 'MATHCH: ' + _GLOBALDICTIONARY[sorted(scores)[-1]]
