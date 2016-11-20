@@ -94,30 +94,19 @@ if __name__ == '__main__':
             words.append(get_related_words(word.lower()))
         words = ' '.join(words)
         try:
-<<<<<<< HEAD
-            score = get_score(words, userinput)
-            scores.append(score)
-=======
             # Calculate the score between two files.
             score = get_score(words, userinput)
             scores.append(score)
             # Update the dictionary with the filename and the score.
->>>>>>> a77f54ece887eced3ad1e5529fa15a53acaa0007
             _GLOBALDICTIONARY.update({score: filename})
         except:
             pass
 #        print filename + ': ' + str(scores)
 #    print sorted(scores)[-1]
 
-<<<<<<< HEAD
-    for k, i in _GLOBALDICTIONARY.items():
-        print k, i
-
-=======
     # Print the global dictionary as a list.
     for k, i in _GLOBALDICTIONARY.items():
         print k, i
 
     # Print the highest score match.
->>>>>>> a77f54ece887eced3ad1e5529fa15a53acaa0007
     print 'MATHCH: ' + _GLOBALDICTIONARY[sorted(scores)[-1]]

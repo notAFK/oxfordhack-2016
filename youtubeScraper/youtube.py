@@ -5,7 +5,6 @@ from lxml import html
 import sys
 import io
 
-
 def getSongNames(youtubeLink):
     req = requests.session()
     page = req.post(youtubeLink)
@@ -17,10 +16,10 @@ def getSongNames(youtubeLink):
 def getInstrumLink(songNames):
     songNames = '+'.join(songNames.split(' '))
     payload = {
-        'search_query': songNames
+        'search_query' : songNames
     }
     req = requests.session()
-    page = req.post('https://www.youtube.com/results?', data=payload)
+    page = req.post('https://www.youtube.com/results?', data = payload)
     tree = html.fromstring(page.content)
     instrumLink = tree.xpath('//div[@class="yt-lockup-content"]/h3/a/@href')
     return instrumLink[0]
@@ -28,21 +27,17 @@ def getInstrumLink(songNames):
 
 def downloadYoutube(youtubeLink):
     ydl_opts = {
-        'posprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3'
-        }]
-    }
+            'ignoreerrors': 'True'
+            }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([youtubeLink])
-
 
 
 def getLyrics(songName):
     req = requests.session()
     songName = '+'.join(songName.split(' '))
     payload = {
-        'k': songName
+        'k' : songName
     }
     url = 'http://www.lyricsmania.com/searchnew.php?'
     page = req.post(url, data=payload)
@@ -55,7 +50,7 @@ def getLyrics(songName):
     lyrics = tree.xpath('//div[@class="fb-quotable"]/text()')
     lyrics2 = tree.xpath('//div[@class="fb-quotable"]/div[@class="p402_premium"]/text()')
     a = ('\n'.join(lyrics) + '\n'.join(lyrics2)).replace('\t', '')
-    return a.replace("\n\n\n\n\n", '\n').encode('UTF-8')
+    return a.replace("\n\n\n\n\n\n\n", '\n').encode('UTF-8')
 
 
 def writeLyrics(lyric, songName):
@@ -67,10 +62,9 @@ def main():
     songNames = getSongNames(sys.argv[1])
     for song in songNames:
         writeLyrics(getLyrics(song), song)
-        if (sys.argv[2] == 'yt'):
-            youtubeLink = getInstrumLink(song + 'instrumental')
-            youtubeLink = 'http://www.youtube.com' + youtubeLink
-            downloadYoutube(youtubeLink)
+        youtubeLink = getInstrumLink(song + 'instrumental')
+        youtubeLink = 'http://www.youtube.com' + youtubeLink
+        downloadYoutube(youtubeLink)
 
 
 if __name__ == '__main__':
