@@ -19,6 +19,7 @@ def passfile(filename):
     newfilename = normalize(filename)
     os.rename(DATAPATH+filename, DATAPATH+newfilename)
 
+
 def passmidi(filename):
     newfilename = normalize(filename)
     os.rename(MIDIPATH+filename, MIDIPATH+newfilename)
@@ -43,7 +44,11 @@ def index_lyrics(filename, score):
         sentiment = 'hpy'
     else:
         sentiment = 'sad'
-    jsonstring.update({'score': score, 'filename': filename, 'sentiment': sentiment})
+    midiname = ''
+    for midi in os.listdir(MIDIPATH):
+        if str(midi).startswith(filename[0:8]):
+            midiname = str(midi)
+    jsonstring.update({'score': score, 'filename': filename, 'sentiment': sentiment, 'midi': MIDIPATH+midiname})
 
     with open('INDEX.db', 'a') as mainindex:
         mainindex.write(json.dumps(jsonstring))
@@ -51,9 +56,10 @@ def index_lyrics(filename, score):
 
 if __name__ == '__main__':
     td = os.listdir(DATAPATH)
-    if sys.argv[1] == 'midi':
-        for d in os.listdir(MIDIPATH):
-            passmidi(d)
+    if len(sys.argv) > 1:
+        if sys.argv[1] == 'midi':
+            for d in os.listdir(MIDIPATH):
+                passmidi(d)
     for d in td:
         if sys.argv[1] == 'pass':
             passfile(d)
