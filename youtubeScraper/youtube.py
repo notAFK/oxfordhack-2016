@@ -4,7 +4,6 @@ import requests
 from lxml import html
 import sys
 import io
-import pygster
 
 def getSongNames(youtubeLink):
     req = requests.session()
@@ -12,6 +11,7 @@ def getSongNames(youtubeLink):
     tree = html.fromstring(page.content)
     songNames = tree.xpath('//div[@class="yt-lockup-content"]/h3/a/text()')
     return songNames
+
 
 def getInstrumLink(songNames):
     songNames = '+'.join(songNames.split(' '))
@@ -24,10 +24,12 @@ def getInstrumLink(songNames):
     instrumLink = tree.xpath('//div[@class="yt-lockup-content"]/h3/a/@href')
     return instrumLink[0]
 
+
 def downloadYoutube(youtubeLink):
     ydl_opts = {}
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([youtubeLink]) 
+
 
 def getLyrics(songName):
     req = requests.session()
@@ -46,11 +48,13 @@ def getLyrics(songName):
     lyrics = tree.xpath('//div[@class="fb-quotable"]/text()')
     lyrics2 = tree.xpath('//div[@class="fb-quotable"]/div[@class="p402_premium"]/text()')
     a = ('\n'.join(lyrics) + '\n'.join(lyrics2)).replace('\t', '')
-    return a.replace("\n\n\n\n\n", '\n')
+    return a.replace("\n\n\n\n\n\n\n", '\n').encode('UTF-8')
+
 
 def writeLyrics(lyric, songName):
     with io.FileIO(songName + ".txt", "w") as file:
             file.write(lyric)
+
 
 def main():
     songNames = getSongNames(sys.argv[1])
@@ -59,8 +63,7 @@ def main():
         youtubeLink = getInstrumLink(song + 'instrumental')
         youtubeLink = 'http://www.youtube.com' + youtubeLink
         downloadYoutube(youtubeLink)
-	pipeline = pygster.parse_launch("filesrc location=" + song + ".wav ! decodebin ! audioconvert !  lame ! filesink location=" + song + ".mp3")
-	pipeline.set_state(gst.STATE_PLAYING)
+
 
 if __name__ == '__main__':
     main()
