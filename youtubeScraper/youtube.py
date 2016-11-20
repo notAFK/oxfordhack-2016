@@ -9,7 +9,7 @@ def getSongNames(youtubeLink):
     req = requests.session()
     page = req.post(youtubeLink)
     tree = html.fromstring(page.content)
-    songNames = tree.xpath('//div[@class="yt-lockup-content"]/h3/a/text()')
+    songNames = tree.xpath('//td[@class="pl-video-title"]/a/text()')
     return songNames
 
 
@@ -26,7 +26,9 @@ def getInstrumLink(songNames):
 
 
 def downloadYoutube(youtubeLink):
-    ydl_opts = {}
+    ydl_opts = {
+            'ignoreerrors': 'True'
+            }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([youtubeLink]) 
 
