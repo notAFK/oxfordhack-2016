@@ -1,7 +1,11 @@
 import os
+import sys
+import json
 import nltk
 import string
+import indexer
 import requests
+import makeuplink
 from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
@@ -9,9 +13,11 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 # Points to the directory that contains lyrics.
-TRAIN_DATA_DIR = 'train_data'
+TRAIN_DATA_DIR = 'youtubeScraper/ok/'
 # Points to the user input file.
 USERINPUT = 'input1.txt'
+# Path to main database index.
+INDEXDB = 'INDEX.db'
 
 
 def stem_tokens(tokens):
@@ -33,24 +39,6 @@ def cosine_sim(text1, text2):
 def get_related_words(word):
     ''' Deprecated method. '''
     return word
-    '''
-    try:
-        url = THESAURUS_URL + word
-        print url
-        headers = {'accept': 'text/html'}
-        soup = BeautifulSoup(requests.get(url, headers=headers).content, 'html.parser')
-        sense_groups = soup.find_all('section', 'sense_group_0')
-        if len(sense_groups) == 0:
-            return word
-
-        divs = sense_groups[0].find_all('div', 'se2')[0].find_all('div', 'synGroup')
-        words = []
-        for div in divs:
-            words.append(div.p.strong.string)
-        return ' '.join(words)
-    except Exception as ex:
-        return word
-    '''
 
 
 def read_file(filename):
@@ -78,7 +66,7 @@ if __name__ == '__main__':
     # Read the user input file and prepare the variables.
     userinput = read_file(USERINPUT)
     words = []
-    _GLOBALDICTIONARY = {}
+    _GLOBALDICTIONARY = []
     tokenizer = RegexpTokenizer(r"[\w']+")
 
     # Start matching the words.
@@ -98,15 +86,52 @@ if __name__ == '__main__':
             score = get_score(words, userinput)
             scores.append(score)
             # Update the dictionary with the filename and the score.
-            _GLOBALDICTIONARY.update({score: filename})
+            _GLOBALDICTIONARY.append(dict({'rating': score, 'filename': filename}))
         except:
             pass
 #        print filename + ': ' + str(scores)
 #    print sorted(scores)[-1]
 
-    # Print the global dictionary as a list.
-    for k, i in _GLOBALDICTIONARY.items():
-        print k, i
+    THISSENTIMENT = float(makeuplink.get_sentiment(USERINPUT))
+    if THISSENTIMENT > 0.5:
+        THISSENTIMENT = 'hpy'
+    else:
+        THISSENTIMENT = 'sad'
 
-    # Print the highest score match.
-    print 'MATHCH: ' + _GLOBALDICTIONARY[sorted(scores)[-1]]
+#    Print the global dictionary as a list.
+#    for k, d in _GLOBALDICTIONARY.items():
+#        print k, d
+
+    sentimentdictlist = []
+    with open(INDEXDB, 'r') as mainindex:
+        for line in mainindex.readlines():
+            jsondict = json.loads(line)
+            if jsondict['sentiment'] == THISSENTIMENT:
+                sentimentdictlist.append(jsondict)
+
+    finalscores = []
+    for sdict in sentimentdictlist:
+        for gdict in _GLOBALDICTIONARY:
+            if gdict['filename'] == sdict['filename']:
+                finalscores.append(gdict['rating'])
+
+    highscore = sorted(finalscores, reverse=True)[0]
+
+    for gdict in _GLOBALDICTIONARY:
+        if gdict['rating'] == highscore:
+            for sdict in sentimentdictlist:
+                if gdict['filename'] == sdict['filename']:
+                    print
+                    print gdict
+                    print sdict
+
+
+    # finalscores = []
+    # for mydict in sentimentdictlist:
+    #     finalscores.append(mydict['score'])
+    #
+    # finalscores = sorted(finalscores)
+    # highscore = finalscores[-1]
+    # for mydict in sentimentdictlist:
+    #     if mydict['score'] == highscore:
+    #         print mydict
