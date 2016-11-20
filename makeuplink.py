@@ -32,4 +32,5 @@ def get_sentiment(inputfile):
     with requests.session() as shortname:
         answer = shortname.post('https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment', headers=write_header('82e0a934b6f44e0db5b33fc6635fd297'), data=write_doc_string(inputfile))
     returndict = json.loads(answer.content)
+    print returndict
     return returndict['documents'][0]['score']
