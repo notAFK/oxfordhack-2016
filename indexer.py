@@ -31,17 +31,21 @@ def passlyrics(filename):
 
 
 def index_lyrics(filename, score):
+    sentiment = ''
     with open('INDEX.db', 'a') as mainindex:
-        mainindex.writelines(str(score) + ' ' + filename + '\n')
+        if score > 0.5:
+            sentiment = 'hpy'
+        else:
+            sentiment = 'sad'
+        mainindex.writelines(str(score) + ' ' + filename + ' ' + sentiment + ' \n')
 
 if __name__ == '__main__':
     td = os.listdir(DATAPATH)
     for d in td:
-        if sys.argv[1] == 'pass':
-            passfile(d)
-        elif sys.argv[1] == 'lyrics':
-            passlyrics(DATAPATH+d)
-        elif sys.argv[1] == 'server':
-            index_lyrics(d, get_sentiment(DATAPATH+d))
+        if len(sys.argv) > 1:
+            if sys.argv[1] == 'pass':
+                passfile(d)
+            elif sys.argv[1] == 'lyrics':
+                passlyrics(DATAPATH+d)
         else:
-            print 'WRONG ARGV'
+            index_lyrics(d, get_sentiment(DATAPATH+d))
