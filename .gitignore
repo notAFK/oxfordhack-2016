@@ -1,3 +1,6 @@
 *.mp3
 *.pyc
 __pycache__
+*.DS_Store
+*.midi
+*.lyri
