@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import os
 import re
 import sys
@@ -8,14 +9,16 @@ from makeuplink import get_sentiment
 # Point to the path of the youtube scrapper.
 # 'ok'      - folder for lyrics.
 # 'midi'    - folder for midi files.
-LYRI_PATH = 'youtubeScraper/ok/'
+LYRI_PATH = 'youtubeScraper/ok2/'
 MIDI_PATH = 'youtubeScraper/midi/'
 
 
 # Remove any unwanted char from the file name.
 def normalize(text):
-    text = unicode(re.sub('[^\w\s-]', '', text).strip().lower())
+    text = unicode(re.sub('[^\w\s.\s-]', '', text).strip().lower())
     text = unicode(re.sub('[-\s]+', '-', text))
+    text = unicode(re.sub('.txt', '.lyri', text))
+    print '--- NORMALIZED TO: ' + text
     return text
 
 
@@ -86,8 +89,8 @@ if __name__ == '__main__':
         if 'lyri' in sys.argv:
             print '\n- START PARSING LYRI FILES'
             for lyri in lyri_list:
-                parse_file(lyri, LYRI_PATH)
                 parse_lyri(LYRI_PATH + lyri)
+                parse_file(lyri, LYRI_PATH)
         # Write entries to .json and get sentiment from MS Text An. API
         if 'index' in sys.argv:
             print '\n- START INDEXING'
