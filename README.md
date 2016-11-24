@@ -56,7 +56,7 @@ The ```indexer.py``` in conjuction with ```makeuplink.py``` create the ```INDEX.
 - ```python indexer.py index``` calls the indexer in production mode, meaning that it will read all training data then call the Microsoft API and index: the lyrics ```filename``` with their appropiate sentiment ```score``` and the coresponding ```midi``` file.
 All indexed data is stored in ```JSON``` format, representing ```Python Dictionary``` objects.
 
-### ```csim```
+### ```csim``` - Cosine Similarity
 Pellentesque viverra nunc vel nisi viverra porta. Aliquam dolor quam, sodales et arcu eget, posuere hendrerit magna. Vestibulum non rhoncus est. Pellentesque ullamcorper nibh a mi finibus volutpat. Donec facilisis quam massa, eget tincidunt tortor pretium vel. Aliquam erat volutpat. Mauris elementum turpis ut dui venenatis, eget porttitor eros faucibus. 
 
 ### ```rbm``` - Restricted Boltzmann Machine
