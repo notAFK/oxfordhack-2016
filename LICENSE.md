@@ -21,8 +21,8 @@
     Modified Package, or a derivative of this Package.
 
  6. Us is defined as the initial developers of this Package,
-    Alexandru-Paul Copil, Dan Andrei Iliescu, Dragos-Alexandru Radu and
-    Paul Chelarescu.
+    Alexandru-Paul Copil, Andrei Muntean, Dragos-Alexandru Radu and
+    Raul Ignatus.
     
 ###Agreement
 
