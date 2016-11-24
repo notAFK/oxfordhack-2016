@@ -21,8 +21,8 @@ def get_config(CONFIG_FILE='CONFIG.json'):
     print '# Loading config file.'
     with open(CONFIG_FILE, 'r') as configfile:
         config = json.loads(configfile.read())
-        MIDI_PATH = config["MIDI_PATH"]
-        LYRI_PATH = config["LYRI_PATH"]
+        MIDI_PATH = os.path.abspath(config["MIDI_PATH"])
+        LYRI_PATH = os.path.abspath(config["LYRI_PATH"])
         API_KEY = config["MS_CS_API_KEY"]
     print MIDI_PATH, LYRI_PATH, API_KEY
 
