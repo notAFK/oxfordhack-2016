@@ -112,5 +112,4 @@ if __name__ == '__main__':
         if 'index' in sys.argv:
             print '\n- START INDEXING'
             for lyri in lyri_list:
-                # index_lyrics(lyri, get_sentiment(LYRI_PATH+lyri, API_KEY))
-                index_lyrics(lyri, 0)
+                index_lyrics(lyri, get_sentiment(LYRI_PATH+lyri, API_KEY))
