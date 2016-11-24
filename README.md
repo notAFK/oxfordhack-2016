@@ -2,10 +2,12 @@
 ```python
 from kitchen import coffee
 ```
-![winbadge](https://img.shields.io/badge/oxfordhack2016-winner-FFB900.svg?style=flat-square)
-![msbadge](https://img.shields.io/badge/microsoft-winner-64C200.svg?style=flat-square)
-![license](https://img.shields.io/badge/license-!AFK-00A1F3.svg?style=flat-square)
 ![neuraln](https://img.shields.io/badge/neuralnetworks-yes-FF2E00.svg?style=flat-square)
+![msbadge](https://img.shields.io/badge/microsoft-winner-64C200.svg?style=flat-square)
+
+
+![license](https://img.shields.io/badge/license-!AFK-00A1F3.svg?style=flat-square)
+![winbadge](https://img.shields.io/badge/oxfordhack2016-winner-FFB900.svg?style=flat-square)
 
 ---
 Description
