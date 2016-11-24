@@ -1,7 +1,16 @@
-*.mp3
-*.pyc
-__pycache__
+# OS Misc
 *.DS_Store
-*.midi
+
+# Python Misc
+*.pyc
+*.pkl
+*__pycache__
+
+# Text Files
 *.lyri
-!youtubeScraper/ok2/*
+
+# Media Files
+*.mp4
+*.mp3
+*.midi
+*.mid
