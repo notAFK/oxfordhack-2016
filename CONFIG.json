@@ -1,5 +1,6 @@
 {
   "MIDI_PATH": "youtubeScraper/midi/",
   "LYRI_PATH": "youtubeScraper/ok2/",
-  "MS_CS_API_KEY": "<INSERT KEY HERE>"
+  "MS_CS_API_KEY": "<INSERT KEY HERE>",
+  "INPUT_FILE": "input1.txt"
 }
