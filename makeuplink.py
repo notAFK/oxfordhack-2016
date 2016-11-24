@@ -26,10 +26,10 @@ def write_doc_string(filelocation):
     return json.dumps(DATA)
 
 
-def get_sentiment(inputfile):
+def get_sentiment(inputfile, apikey):
     print 'GET SENTIMENT FOR: ' + inputfile
     with requests.session() as shortname:
-        answer = shortname.post('https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment', headers=write_header('82e0a934b6f44e0db5b33fc6635fd297'), data=write_doc_string(inputfile))
+        answer = shortname.post('https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment', headers=write_header(apikey), data=write_doc_string(inputfile))
     returndict = json.loads(answer.content)
     print 'RETURNED: ', returndict
     return returndict['documents'][0]['score']

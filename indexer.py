@@ -6,11 +6,25 @@ import json
 import unicodedata
 from makeuplink import get_sentiment
 
-# Point to the path of the youtube scrapper.
-# 'ok'      - folder for lyrics.
-# 'midi'    - folder for midi files.
-LYRI_PATH = 'youtubeScraper/ok2/'
-MIDI_PATH = 'youtubeScraper/midi/'
+
+# Load empty config constants.
+MIDI_PATH = ''
+LYRI_PATH = ''
+API_KEY = ''
+
+
+# Get constant config from a json config file.
+# By default CONFIG.json
+
+def get_config(CONFIG_FILE='CONFIG.json'):
+    global LYRI_PATH, MIDI_PATH, API_KEY
+    print '# Loading config file.'
+    with open(CONFIG_FILE, 'r') as configfile:
+        config = json.loads(configfile.read())
+        MIDI_PATH = config["MIDI_PATH"]
+        LYRI_PATH = config["LYRI_PATH"]
+        API_KEY = config["MS_CS_API_KEY"]
+    print MIDI_PATH, LYRI_PATH, API_KEY
 
 
 # Remove any unwanted char from the file name.
@@ -63,8 +77,8 @@ def index_lyrics(filename, score):
     if midiname == 'null':
         print '--- No midi file found for ' + filename
     else:
-        print '--- JSON: ' + jsonstring
         jsonstring.update({'score': score, 'filename': filename, 'sentiment': sentiment, 'midi': MIDI_PATH+midiname})
+        print '--- JSON: ', jsonstring
 
         # Write entry to the INDEX.json
         with open('INDEX.json', 'a') as mainindex:
@@ -74,6 +88,9 @@ def index_lyrics(filename, score):
 
 
 if __name__ == '__main__':
+    # Load config file.
+    get_config()
+
     # Load file names from main paths.
     lyri_list = os.listdir(LYRI_PATH)
     midi_list = os.listdir(MIDI_PATH)
@@ -95,5 +112,5 @@ if __name__ == '__main__':
         if 'index' in sys.argv:
             print '\n- START INDEXING'
             for lyri in lyri_list:
-                # index_lyrics(lyri, get_sentiment(LYRI_PATH+lyri))
+                # index_lyrics(lyri, get_sentiment(LYRI_PATH+lyri, API_KEY))
                 index_lyrics(lyri, 0)
