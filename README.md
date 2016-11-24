@@ -44,7 +44,7 @@ The ```MS_CS_API_KEY``` is the 32 character long string containing both letters 
 This key can be found on [My Account](https://www.microsoft.com/cognitive-services/en-US/subscriptions) page and should look something like this:
 ![myaccapikey](http://i.imgur.com/ijI54d0.png)
 
-The default input file for the user input (transfered using PHP from the main website) is stored in ```input1.txt```.
+The default input file for the user input (transferred using PHP from the main website) is stored in ```input1.txt```.
 
 ### ```youtubeScrapper```
 Praesent tincidunt accumsan orci vel eleifend. Vestibulum et luctus purus. Vestibulum eu rhoncus enim. Donec pretium posuere scelerisque. Nam nec tellus orci. Ut ac magna tempor, tincidunt nulla eu, pretium elit. Vestibulum faucibus neque sed neque rutrum, a dignissim diam finibus. Vivamus quis consectetur neque.
@@ -54,7 +54,7 @@ The ```indexer.py``` in conjuction with ```makeuplink.py``` create the ```INDEX.
 - ```python indexer.py midi``` which goes trough the specified ```MIDI_PATH``` and normalizes all file names.
 - ```python indexer.py lyri``` which goes trough the specified ```LYRI_PATH``` and normalizes all file names, after that it removes any white spaces and empty lines from inside the lyrics file.
 - ```python indexer.py index``` calls the indexer in production mode, meaning that it will read all training data then call the Microsoft API and index: the lyrics ```filename``` with their appropiate sentiment ```score``` and the coresponding ```midi``` file.
-All indexed data is stored in ```JSON``` format, represinting ```Python Dictionary``` objects.
+All indexed data is stored in ```JSON``` format, representing ```Python Dictionary``` objects.
 
 ### ```csim```
 Pellentesque viverra nunc vel nisi viverra porta. Aliquam dolor quam, sodales et arcu eget, posuere hendrerit magna. Vestibulum non rhoncus est. Pellentesque ullamcorper nibh a mi finibus volutpat. Donec facilisis quam massa, eget tincidunt tortor pretium vel. Aliquam erat volutpat. Mauris elementum turpis ut dui venenatis, eget porttitor eros faucibus. 
