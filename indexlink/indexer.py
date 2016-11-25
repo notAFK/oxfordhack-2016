@@ -108,7 +108,12 @@ def index_lyrics(filename, score):
     if midiname == 'null':
         print '--- No midi file found for ' + filename
     else:
-        jsonstring.update({'score': score, 'filename': filename, 'sentiment': sentiment, 'midi': MIDI_PATH+midiname, 'hash': hash_contnet(filename)})
+        jsonstring.update(
+            {'score': score,
+             'filename': filename,
+             'sentiment': sentiment,
+             'midi': MIDI_PATH+midiname,
+             'hash': hash_contnet(filename)})
 
         # Log event.
         print '--- JSON: ', jsonstring
@@ -121,8 +126,24 @@ def index_lyrics(filename, score):
 
 
 def hash_contnet(filename):
+    ''' This method takes a lyri file and returns
+        a SHA256 hash of it's content. '''
+
     with open(LYRI_PATH+filename, 'r') as file:
         return hashlib.sha256(file.read()).hexdigest()
+
+
+def hash_compare(filename):
+    ''' Method returns False if the hash of the given file already exists in
+        the index, or true if it does not. '''
+
+    filehash = hash_contnet(filename)
+    with open('INDEX.json', 'r') as mainindex:
+        for line in mainindex.readlines():
+            entry = json.loads(line)
+            if entry['hash'] == filehash:
+                return False
+    return True
 
 
 if __name__ == '__main__':
@@ -156,7 +177,9 @@ if __name__ == '__main__':
             print '\n- START INDEXING'
             lyri_list = os.listdir(LYRI_PATH)
             for lyri in lyri_list:
+                if hash_compare(lyri):
+                    index_lyrics(lyri, 0)
+                else:
+                    print lyri
+                    print '----- FILE ALREADY IN INDEX!'
                 # index_lyrics(lyri, get_sentiment(LYRI_PATH+lyri, API_KEY))
-
-                # Debug only.
-                index_lyrics(lyri, 0)
