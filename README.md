@@ -58,6 +58,19 @@ The ```indexer.py``` in conjuction with ```makeuplink.py``` create the ```INDEX.
 - ```python indexer.py index``` calls the indexer in production mode, meaning that it will read all training data then call the Microsoft API and index: the lyrics ```filename``` with their appropiate sentiment ```score``` and the coresponding ```midi``` file.
 All indexed data is stored in ```JSON``` format, representing ```Python Dictionary``` objects.
 
+### ```INDEX.json```
+The structure of the ```JSON``` ```INDEX``` is as follows:
+```json
+{
+  "score": 0.4,
+  "hash": "4b3510047885e8d8a5faff9ce821ee234d5cfd8680aae44ba40e5f749637f8cf",
+  "filename": "awesome-song-by-mozzart-2016.lyri",
+  "sentiment": "sad",
+  "midi": "/SOMEPATH/oxfordhack-2016/data/midi/awesome-song-by-mozzart-2016.midi"
+}
+```
+The ```score``` represents the sentiment value given by Microsoft Text Analytics API, from which we obtain ```sad``` or ```hpy```. The hash is associated to the ```.lyri``` file, as the hash is a ```SHA256``` hash of the content of the lyri file. The ```filename``` points to the origin of the lyrics while the ```midi``` represents the location of the midi instrumental.
+
 ### ```csim``` - Cosine Similarity
 Pellentesque viverra nunc vel nisi viverra porta. Aliquam dolor quam, sodales et arcu eget, posuere hendrerit magna. Vestibulum non rhoncus est. Pellentesque ullamcorper nibh a mi finibus volutpat. Donec facilisis quam massa, eget tincidunt tortor pretium vel. Aliquam erat volutpat. Mauris elementum turpis ut dui venenatis, eget porttitor eros faucibus. 
 
