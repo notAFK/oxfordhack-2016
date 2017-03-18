@@ -1,7 +1,14 @@
 from scipy import misc
 import tensorflow as tf
 import numpy as np
+import os
 
+__all__ = ['DATA_PATH', 'MIDI_PATH', 'LYRICS_PATH', 'sample_prob', 'gen_batches', 'gen_image']
+
+ROOT = os.path.abspath(os.path.dirname(__file__) + '..')
+DATA_PATH = ROOT + '/data'
+MIDI_PATH = DATA_PATH + '/midi'
+LYRICS_PATH = DATA_PATH + '/lyrics'
 
 def sample_prob(probs, rand):
     """ Takes a tensor of probabilities (as from a sigmoidal activation)

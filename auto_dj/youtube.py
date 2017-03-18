@@ -1,18 +1,17 @@
-"""Get stuff from youtube."""
+"""Get videos and lyrics from youtube.
+
+You give a link for a playlist, and this script scraps everything,
+getting the videos and the lyrics.
+"""
 from __future__ import unicode_literals
-from subprocess import call
+import re
+import sys
+import string
+import hashlib
 import youtube_dl
 import requests
 from lxml import html
-import string
-import re
-import sys
-import os
-
-
-DATA_PATH = os.path.abspath(os.path.dirname(__file__) + '../data')
-MIDI_PATH = DATA_PATH + '/midi/'
-LYRICS_PATH = DATA_PATH + '/lyrics/'
+from utils import *
 
 
 def get_song_names(youtube_url):
@@ -39,9 +38,10 @@ def get_instrumental_link(song_name):
 def download_video(youtube_url, song_name):
     """Download the mp4 video."""
     song_name = ''.join(process_string(song_name))
+    song_name = hashlib.sha256(song_name).hexdigest()
     ydl_opts = {
         'ignoreerrors': 'True',
-        'outtmpl': MIDI_PATH + song_name + '.%(ext)s',
+        'outtmpl': MIDI_PATH + '/' + song_name + '.%(ext)s',
         'recodevideo': 'mp4'
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
@@ -70,7 +70,8 @@ def get_lyrics(song_name):
 def write_lyrics(lyric, song_name):
     """Write the lyrics to file."""
     song_name = process_string(song_name)
-    with open(LYRICS_PATH + song_name + ".txt", "w") as file:
+    song_name = hashlib.sha256(song_name).hexdigest()
+    with open(LYRICS_PATH + '/' + song_name + ".txt", "w") as file:
         file.write(lyric)
 
 
