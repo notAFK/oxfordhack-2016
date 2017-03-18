@@ -14,3 +14,6 @@
 *.mp3
 *.midi
 *.mid
+
+data
+.vscode

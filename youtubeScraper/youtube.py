@@ -1,3 +1,4 @@
+"""Get stuff from youtube."""
 from __future__ import unicode_literals
 from subprocess import call
 import youtube_dl
@@ -6,80 +7,93 @@ from lxml import html
 import string
 import re
 import sys
-import io
+import os
 
-MIDI_PATH = './midi/'
-LYRICS_PATH = './lyrics/'
 
-def getSongNames(youtubeLink):
+DATA_PATH = os.path.abspath(os.path.dirname(__file__) + '../data')
+MIDI_PATH = DATA_PATH + '/midi/'
+LYRICS_PATH = DATA_PATH + '/lyrics/'
+
+
+def get_song_names(youtube_url):
+    """Get the names of the song from an URL."""
     req = requests.session()
-    page = req.post(youtubeLink)
+    page = req.post(youtube_url)
     tree = html.fromstring(page.content)
-    songNames = tree.xpath('//td[@class="pl-video-title"]/a/text()')
-    return songNames
+    return tree.xpath('//td[@class="pl-video-title"]/a/text()')
 
 
-def getInstrumLink(songNames):
-    songNames = '+'.join(songNames.split(' '))
-    payload = { 'search_query' : songNames }
+def get_instrumental_link(song_name):
+    """Get the url for the instrumental of the song."""
+    song_name = '+'.join(song_name.split(' '))
+    payload = {'search_query': song_name}
     req = requests.session()
-    page = req.post('https://www.youtube.com/results?', data = payload)
+    page = req.post('https://www.youtube.com/results?', data=payload)
     tree = html.fromstring(page.content)
-    instrumLink = tree.xpath('//div[@class="yt-lockup-content"]/h3/a/@href')
-    return instrumLink[0]
+    instrumental_urls = tree.xpath('//div[@class="yt-lockup-content"]/h3/a/@href')
+    if len(instrumental_urls) == 0:
+        return ''
+    return instrumental_urls[0]
 
 
-def downloadYoutube(youtubeLink, songName):
-    songName = ''.join(parseString(songName))
-    ydl_opts = { 
-            'ignoreerrors': 'True',
-            'outtmpl': MIDI_PATH + songName + '.%(ext)s',
-            'recodevideo': 'mp4'
-            }
+def download_video(youtube_url, song_name):
+    """Download the mp4 video."""
+    song_name = ''.join(process_string(song_name))
+    ydl_opts = {
+        'ignoreerrors': 'True',
+        'outtmpl': MIDI_PATH + song_name + '.%(ext)s',
+        'recodevideo': 'mp4'
+    }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([youtubeLink])
+        ydl.download([youtube_url])
 
 
-def getLyrics(songName):
+def get_lyrics(song_name):
+    """Get the lyrics for a song."""
     req = requests.session()
-    songName = '+'.join(songName.split(' '))
-    payload = { 'k' : songName }
-    lyricsUrl = 'http://www.lyricsmania.com/searchnew.php?'
-    page = req.post(lyricsUrl, data = payload)
+    song_name = '+'.join(song_name.split(' '))
+    payload = {'k': song_name}
+    lyrics_url = 'http://www.lyricsmania.com/searchnew.php?'
+    page = req.post(lyrics_url, data=payload)
     tree = html.fromstring(page.content)
-    lyricLink = tree.xpath('//ul[@class="list-search"]/li/a/@href')
-    page = req.post('http://www.lyricsmania.com' + lyricLink[0])
+    lyrics_url = tree.xpath('//ul[@class="list-search"]/li/a/@href')
+    page = req.post('http://www.lyricsmania.com' + lyrics_url[0])
     tree = html.fromstring(page.content)
     lyrics = tree.xpath('//div[@class="fb-quotable"]/text()')
-    lyrics2 = tree.xpath('//div[@class="fb-quotable"]/div[@class="p402_premium"]/text()')
-    finalLyric = ('\n'.join(lyrics) + '\n'.join(lyrics2)).replace('\t', '')
-    finalLyric = finalLyric.replace("\n\n\n\n\n\n\n", '\n').encode('UTF-8')
-    return finalLyric
+    lyrics2 = tree.xpath(
+        '//div[@class="fb-quotable"]/div[@class="p402_premium"]/text()')
+    final_lyrics = ('\n'.join(lyrics) + '\n'.join(lyrics2)).replace('\t', '')
+    final_lyrics = final_lyrics.replace("\n\n\n\n\n\n\n", '\n').encode('UTF-8')
+    return final_lyrics
 
 
-def writeLyrics(lyric, songName):
-    songName = ''.join(parseString(songName))
-    with io.FileIO(LYRICS_PATH + songName + ".txt", "w") as file:
-            file.write(lyric)
+def write_lyrics(lyric, song_name):
+    """Write the lyrics to file."""
+    song_name = process_string(song_name)
+    with open(LYRICS_PATH + song_name + ".txt", "w") as file:
+        file.write(lyric)
 
 
-#remove non-ASCII symbols + useless information
-def parseString(name):
+def process_string(name):
+    """Remove non-ASCII symbols + useless information."""
     name = name.replace(' ', '').replace('.', '')
     printable = set(string.printable)
     name = ''.join(filter(lambda x: x in printable, name))
-    regex = re.compile(".*?\((.*?)\)")
-    toReplace = re.findall(regex, name)
-    return name.replace('(' + ''.join(toReplace) + ')', '')
-    
+    regex = re.compile(r".*?\((.*?)\)")
+    to_replace = re.findall(regex, name)
+    name = name.replace('(' + ''.join(to_replace) + ')', '')
+    return name.replace("\n", "")
 
 def main():
-    songNames = getSongNames(sys.argv[1])
-    for song in songNames:
-        writeLyrics(getLyrics(song), song)
-        youtubeLink = getInstrumLink(song + 'instrumental')
-        youtubeLink = 'http://www.youtube.com' + youtubeLink
-        downloadYoutube(youtubeLink, song)
+    """Main function."""
+    song_names = get_song_names(sys.argv[1])
+    for song in song_names:
+        write_lyrics(get_lyrics(song), song)
+        youtube_url = get_instrumental_link(song + 'instrumental')
+        if youtube_url == '':
+            continue
+        youtube_url = 'http://www.youtube.com' + youtube_url
+        download_video(youtube_url, song)
 
 
 if __name__ == '__main__':
